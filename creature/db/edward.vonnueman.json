@@ -1,0 +1,10 @@
+{
+    "name": "edward.vonneuman",
+    "type": "creature",
+    "species": "werewolf",
+    "physicalTraits": "Strong, fur",
+    "behavior": "Aggressive",
+    "intelligence": "Below Average",
+    "knownAbilities": "Claws, fangs, runs fast",
+    "history": "Existed since the 1800s"
+}
