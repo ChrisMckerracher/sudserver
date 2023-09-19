@@ -1,0 +1,7 @@
+{
+  "name": "security_cam.789",
+  "type": "hackable",
+  "enabled": true,
+  "viewing": false,
+  "policeControlled": true
+}

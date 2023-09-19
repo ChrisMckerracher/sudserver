@@ -1,28 +1,25 @@
-from elasticsearch import Elasticsearch
-
 from repository.EsRepository import EsRepository
 
-es = Elasticsearch(hosts="http://0.0.0.0:9200")
 
-class LocationRepository(EsRepository):
+class HackableRepository(EsRepository):
 
     def __init__(self, es):
         super().__init__(es)
 
-    def search(self, field: str, name: str):
+    def search(self, name: str):
         responses = self.es.search(index="entity", query={
                 "bool": {
                     "must": [
                         {
                             "query_string": {
                                 "fields": ["type"],
-                                "query": "location"
+                                "query": "hackable"
                             }
                         },
                         {
                             "query_string": {
-                                "fields": ["locationType"],
-                                "query": f"\"{field}\""
+                                "fields": ["name"],
+                                "query": f"\"{name}\""
                             }
                         },
                         {
