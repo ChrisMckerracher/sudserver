@@ -70,6 +70,16 @@ hackingService = HackingService(hackingRepository)
 def hack():
     data = request.json
 
+    response = hackingService.attemptHack(data["name"])
+
+    response = {
+        "values": response
+    }
+
+    response.update(data)
+
+    return (response, 200)
+
 
 if __name__ == '__main__':
     application.run(debug=True, port=8000)
