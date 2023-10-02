@@ -40,8 +40,11 @@ emailQueryService = EmailQueryService(emailRepository)
 locationRepository = LocationRepository(es)
 locationQueryService = LocationQueryService(locationRepository)
 
+#todo: fix it so we're passing a pydantic model properly to actually validate
+
 @application.route('/search', methods=['POST'])
 @validate()
+#todo: fix it so we're passing a pydantic model properly to actually validate
 def search():
     data = request.json
     type = data["type"]
@@ -79,6 +82,14 @@ def hack():
     response.update(data)
 
     return (response, 200)
+
+@application.route('/login', methods=['POST'])
+@validate()
+def login():
+    data = request.json
+    name = data['name']
+
+
 
 
 if __name__ == '__main__':

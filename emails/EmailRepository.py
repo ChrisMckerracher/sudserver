@@ -7,7 +7,7 @@ es = Elasticsearch(hosts="http://0.0.0.0:9200")
 class EmailRepository(EsRepository):
 
     def __init__(self, es):
-        super().__init__(es)
+        super().__init__(es, "index")
 
     def search(self, email: str):
         responses = self.es.search(index="entity", query={

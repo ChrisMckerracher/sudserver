@@ -4,7 +4,7 @@ from repository.EsRepository import EsRepository
 class HackableRepository(EsRepository):
 
     def __init__(self, es):
-        super().__init__(es)
+        super().__init__(es, "index")
 
     def search(self, name: str):
         responses = self.es.search(index="entity", query={
