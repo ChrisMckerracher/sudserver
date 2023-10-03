@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from redis.client import Redis
 
-from db.redis.RedisQuery import RedisQuery
+from db.redis.redis_query import RedisQuery
 
 ExcludeFields =["key", "index"]
 

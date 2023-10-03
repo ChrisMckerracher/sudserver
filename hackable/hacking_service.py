@@ -1,4 +1,4 @@
-from hackable.HackableRepository import HackableRepository
+from hackable.hackable_repository import HackableRepository
 
 
 class HackingService:

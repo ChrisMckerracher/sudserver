@@ -1,4 +1,4 @@
-from db.es.EsRepository import EsRepository
+from db.es.es_repository import EsRepository
 
 
 class HackableRepository(EsRepository):

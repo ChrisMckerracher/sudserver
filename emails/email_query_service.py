@@ -1,6 +1,6 @@
-from creature import CreatureRepository
-from emails.EmailRepository import EmailRepository
-from query.queryService import QueryService
+from creature.creature_repository import CreatureRepository
+from emails.email_repository import EmailRepository
+from query.query_service import QueryService
 
 
 class EmailQueryService(QueryService):

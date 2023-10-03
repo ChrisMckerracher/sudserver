@@ -1,7 +1,5 @@
-from creature import CreatureRepository
-from emails.EmailRepository import EmailRepository
-from location.LocationRepository import LocationRepository
-from query.queryService import QueryService
+from location.location_repository import LocationRepository
+from query.query_service import QueryService
 
 
 class LocationQueryService(QueryService):

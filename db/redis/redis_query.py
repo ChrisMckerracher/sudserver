@@ -2,7 +2,7 @@ from redis.client import Redis
 from pydantic import Generic, TypeVar
 from typing import Optional
 
-from db.redis import RedisEntity
+from db.redis.redis_entity import RedisEntity
 
 T = TypeVar("T", bound=RedisEntity)
 

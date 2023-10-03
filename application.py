@@ -8,14 +8,14 @@ from flask_cors import CORS
 from flask_pydantic import validate
 from pydantic import BaseModel
 
-from creature.CreatureQueryService import CreatureQueryService
-from creature.CreatureRepository import CreatureRepository
-from emails.EmailQueryService import EmailQueryService
-from emails.EmailRepository import EmailRepository
-from hackable.HackableRepository import HackableRepository
-from hackable.HackingService import HackingService
-from location.LocationQueryService import LocationQueryService
-from location.LocationRepository import LocationRepository
+from creature.creature_query_service import CreatureQueryService
+from creature.creature_repository import CreatureRepository
+from emails.email_query_service import EmailQueryService
+from emails.email_repository import EmailRepository
+from hackable.hackable_repository import HackableRepository
+from hackable.hacking_service import HackingService
+from location.location_query_service import LocationQueryService
+from location.location_repository import LocationRepository
 
 application = Flask("application",
                     static_url_path='',

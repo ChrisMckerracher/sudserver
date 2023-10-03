@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from iam.User.model.UserRole import UserRole
+from iam.user.model.user_role import UserRole
 
 
 class User(BaseModel):

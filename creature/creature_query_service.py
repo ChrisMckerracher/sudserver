@@ -1,5 +1,5 @@
-from creature import CreatureRepository
-from query.queryService import QueryService
+from creature.creature_repository import CreatureRepository
+from query.query_service import QueryService
 
 
 class CreatureQueryService(QueryService):
