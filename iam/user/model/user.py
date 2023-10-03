@@ -1,8 +1,7 @@
-from pydantic import BaseModel
-
+from db.redis.redis_entity import RedisEntity
 from iam.user.model.user_role import UserRole
 
 
-class User(BaseModel):
+class User(RedisEntity):
     role: UserRole
-    name: str
+    index = "User"
