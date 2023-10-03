@@ -1,6 +1,4 @@
-from elasticsearch import Elasticsearch
-
-from repository.EsRepository import EsRepository
+from db.es.EsRepository import EsRepository
 
 class CreatureRepository(EsRepository):
 

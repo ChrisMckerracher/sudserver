@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-from repository.EsRepository import EsRepository
+from db.es.EsRepository import EsRepository
 
 es = Elasticsearch(hosts="http://0.0.0.0:9200")
 
