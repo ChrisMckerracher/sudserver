@@ -1,5 +1,5 @@
 # DB
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib import request
 
 from elasticsearch import Elasticsearch
@@ -54,21 +54,26 @@ public_key = "lol"
 algo = "HS256"
 
 
-@application.before_request()
+@application.before_request
 def is_authenticated():
+    return
     session_cookie = request.cookies.get(session_cookie_name)
 
     if (session_cookie):
-        session = Session.model_validate_json(session_cookie)
+        session = jwt.decode(session_cookie, public_key, algorithms=algo)
+        session = Session.model_validate_json(session['session'])
         session = Session.query(get_client()).get(session.id)
 
         if (session):
             g.user = user_repository.get(session.id)
             # ToDo: some user validation shit the session could be mumbo jumbo
             return
-    redirect(url_for("/login"))
+    redirect(url_for("login"))
+
 
 import jwt
+
+
 @application.route('/login', methods=['POST'])
 @validate()
 def login():
@@ -81,25 +86,28 @@ def login():
         user = User(id=name, role=UserRole.PLAYER)
         user_repository.save(name, user)
 
-    #we manually just overwrite existing sessions atm since this app isn't meant to scale
+    # we manually just overwrite existing sessions atm since this app isn't meant to scale
     secrets_string = gen_secret()
     session = Session(id=secrets_string, user_id=user.id)
     token = jwt.encode({
-        session: secrets_string
+        "session": secrets_string
     }, public_key, algorithm=algo)
 
-    #long session time to be setup based on game length * 2 to be safe
-    expiration = datetime.now() +  datetime.timedelta(hours=8)
+    # long session time to be setup based on game length * 2 to be safe
+    # ToDo: if running where ppl are not on same timezone, specify UTC for universality :^)
+    expiration = datetime.now() + timedelta(hours=8)
 
     response = make_response(jsonify(message='Welcome Hacker 😎'))
-    response.set_cookie(token, expires=expiration)
-    #generic 200 for now
+    response.set_cookie(key=session_cookie_name, value=token, expires=expiration)
+    # generic 200 for now
     return (response, 200)
 
 
 import secrets
+
+
 def gen_secret() -> str:
-    #there's going to be like no users, we could probably even just do 1 btyte
+    # there's going to be like no users, we could probably even just do 1 btyte
     return secrets.token_urlsafe(4)
 
 

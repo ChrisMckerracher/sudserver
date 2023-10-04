@@ -4,4 +4,4 @@ from iam.user.model.user_role import UserRole
 
 class User(RedisEntity):
     role: UserRole
-    index = "User"
+    index: str = "user"

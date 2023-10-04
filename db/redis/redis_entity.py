@@ -7,13 +7,12 @@ ExcludeFields =["key", "index"]
 
 
 class RedisEntity(BaseModel):
-    key: str
-    index: str
+    id: str
+    index: str = ""
 
     @classmethod
-    @property
     def query(cls, client: Redis) -> RedisQuery:
-        return RedisQuery(type=cls)
+        return RedisQuery(client=client, type=cls)
 
     def dump(self):
         return self.model_dump(mode="json", exclude=set(ExcludeFields))
