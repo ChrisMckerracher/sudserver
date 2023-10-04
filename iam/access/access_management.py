@@ -8,7 +8,7 @@ def is_authorized(role: UserRole):
     def is_auth_decorator(f):
         @wraps(f)
         def auth_wrapper(*args, **kwargs):
-            if (g.user and g.user.role.value < role.value):
+            if (g.user and g.user.role < role):
                 return ("uhuhuh you didnt say the magic word", 401)
             return f(*args, **kwargs)
 
