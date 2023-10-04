@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, TypeVar
 
 from pydantic import BaseModel
 from pydantic._internal._model_construction import ModelMetaclass
@@ -8,11 +8,12 @@ from redis.client import Redis
 # ToDo: makes this configurable potentially... you dont want session persist time to actually be 10 minutes
 persist_time = 60 * 10
 
+T = TypeVar("T", bound=ModelMetaclass)
 
-#ToDo: keeping this generic stuff so i can take more of a look at it later
+
 class RedisQuery(BaseModel):
     client: Redis
-    #I hate this I hate this I hate this
+    # I hate this I hate this I hate this
     type: ModelMetaclass
 
     def get(self, key: str) -> Optional[T]:

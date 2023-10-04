@@ -56,16 +56,14 @@ algo = "HS256"
 
 @application.before_request
 def is_authenticated():
-    return
     session_cookie = request.cookies.get(session_cookie_name)
 
     if (session_cookie):
         session = jwt.decode(session_cookie, public_key, algorithms=algo)
-        session = Session.model_validate_json(session['session'])
-        session = Session.query(get_client()).get(session.id)
+        session = Session.query(get_client()).get(session["session"])
 
         if (session):
-            g.user = user_repository.get(session.id)
+            g.user = user_repository.get(session.user_id)
             # ToDo: some user validation shit the session could be mumbo jumbo
             return
     redirect(url_for("login"))
@@ -89,6 +87,7 @@ def login():
     # we manually just overwrite existing sessions atm since this app isn't meant to scale
     secrets_string = gen_secret()
     session = Session(id=secrets_string, user_id=user.id)
+    Session.query(get_client()).save(secrets_string, session)
     token = jwt.encode({
         "session": secrets_string
     }, public_key, algorithm=algo)
