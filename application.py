@@ -16,6 +16,7 @@ from emails.email_query_service import EmailQueryService
 from emails.email_repository import EmailRepository
 from hackable.hackable_repository import HackableRepository
 from hackable.hacking_service import HackingService
+from iam.access.access_management import is_authorized
 from iam.session.model.session import Session
 from iam.user.model.user import User
 from iam.user.model.user_role import UserRole
@@ -113,6 +114,7 @@ def gen_secret() -> str:
 # todo: fix it so we're passing a pydantic model properly to actually validate
 @application.route('/search', methods=['POST'])
 @validate()
+@is_authorized(UserRole.PLAYER)
 # todo: fix it so we're passing a pydantic model properly to actually validate
 def search():
     data = request.json

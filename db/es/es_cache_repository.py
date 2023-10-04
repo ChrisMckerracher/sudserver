@@ -41,6 +41,7 @@ class EsCacheRepository(EsRepository, Generic[T]):
                 cls.query(self.redis).save(id, val)
                 return val
             return None
+        return val
 
     # there's no constraints that theres only 1 response. this is a self imposed requirement that i can totally accidentally break lol
     # ToDo: you can actually just search the actual document by id instead of searching bro
