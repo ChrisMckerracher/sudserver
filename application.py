@@ -1,9 +1,10 @@
 # DB
+from datetime import datetime
 from urllib import request
 
 from elasticsearch import Elasticsearch
-from flask import Flask, redirect, url_for
-from flask import request
+from flask import Flask, redirect, url_for, make_response, jsonify
+from flask import request, g
 from flask_cors import CORS
 from flask_pydantic import validate
 from pydantic import BaseModel
@@ -16,6 +17,8 @@ from emails.email_repository import EmailRepository
 from hackable.hackable_repository import HackableRepository
 from hackable.hacking_service import HackingService
 from iam.session.model.session import Session
+from iam.user.model.user import User
+from iam.user.model.user_role import UserRole
 from iam.user.repository.user_repository import UserRepository
 from location.location_query_service import LocationQueryService
 from location.location_repository import LocationRepository
@@ -43,13 +46,14 @@ email_query_service = EmailQueryService(email_repository)
 location_repository = LocationRepository(es)
 location_query_service = LocationQueryService(location_repository)
 
-
 user_repository = UserRepository(es, get_client())
-#move this to a constants/config
+# move this to a constants/config
 session_cookie_name = "auth_session"
-#we dont care about signing the jwt as security is a non issue, hell we dont even have true auth
+# we dont care about signing the jwt as security is a non issue, hell we dont even have true auth. this isn't really a pub key tehnically its a symmetric private key
 public_key = "lol"
 algo = "HS256"
+
+
 @application.before_request()
 def is_authenticated():
     session_cookie = request.cookies.get(session_cookie_name)
@@ -60,17 +64,49 @@ def is_authenticated():
 
         if (session):
             g.user = user_repository.get(session.id)
-            #ToDo: some user validation shit the session could be mumbo jumbo
+            # ToDo: some user validation shit the session could be mumbo jumbo
             return
     redirect(url_for("/login"))
 
+import jwt
+@application.route('/login', methods=['POST'])
+@validate()
+def login():
+    data = request.json
+    name = data['name']
+
+    user = user_repository.get(name)
+    if not user:
+        # admin will be manually created so for now new users are auto-player
+        user = User(id=name, role=UserRole.PLAYER)
+        user_repository.save(name, user)
+
+    #we manually just overwrite existing sessions atm since this app isn't meant to scale
+    secrets_string = gen_secret()
+    session = Session(id=secrets_string, user_id=user.id)
+    token = jwt.encode({
+        session: secrets_string
+    }, public_key, algorithm=algo)
+
+    #long session time to be setup based on game length * 2 to be safe
+    expiration = datetime.now() +  datetime.timedelta(hours=8)
+
+    response = make_response(jsonify(message='Welcome Hacker 😎'))
+    response.set_cookie(token, expires=expiration)
+    #generic 200 for now
+    return (response, 200)
 
 
+import secrets
+def gen_secret() -> str:
+    #there's going to be like no users, we could probably even just do 1 btyte
+    return secrets.token_urlsafe(4)
 
-#todo: fix it so we're passing a pydantic model properly to actually validate
+
+# todo: fix it so we're passing a pydantic model properly to actually validate
 @application.route('/search', methods=['POST'])
 @validate()
-#todo: fix it so we're passing a pydantic model properly to actually validate
+# todo: fix it so we're passing a pydantic model properly to actually validate
 def search():
     data = request.json
     type = data["type"]
@@ -94,6 +130,8 @@ def search():
 
 hackingRepository = HackableRepository(es)
 hackingService = HackingService(hackingRepository)
+
+
 @application.route('/hack', methods=['POST'])
 @validate()
 def hack():
@@ -108,14 +146,6 @@ def hack():
     response.update(data)
 
     return (response, 200)
-
-@application.route('/login', methods=['POST'])
-@validate()
-def login():
-    data = request.json
-    name = data['name']
-
-
 
 
 if __name__ == '__main__':
