@@ -26,7 +26,7 @@ from iam.user.model.user_role import UserRole
 from iam.user.repository.user_repository import UserRepository
 from location.location_query_service import LocationQueryService
 from location.location_repository import LocationRepository
-from flask_socketio import SocketIO, emit, join_room, disconnect
+from flask_socketio import SocketIO, emit, join_room, disconnect, send
 
 application = Flask("application",
                     static_url_path='',
@@ -178,10 +178,10 @@ def authenticate(message):
         return
     else:
         if user.role is UserRole.ADMIN:
-            redis_admin_session = RedisAdminWSSession(sid=request.sid)
-            RedisAdminWSSession.query(get_client()).save()
+            join_room(room="admin", sid=request.sid)
         # ToDo: test if flask-socketio forks sessions properly
         flask.session['user'] = user
+
 
 @socketio.on("socketTest")
 # ToDo: proper IAM support, proper pydantic validation
@@ -191,6 +191,30 @@ def connect(message):
     user = flask.session['user']
     return
 
+
+@socketio.on("rp_request")
+# ToDo: proper IAM support, proper pydantic validation
+# ToDo: proper socket session management
+def rp_request(message):
+    user = flask.session['user']
+    request = message["request"]
+    emit(event="rp_request", args = {
+        "request": request
+    }, to="admin")
+
+
+@socketio.on("rp_response")
+@is_socket_authorized(UserRole.ADMIN)
+def rp_response(message):
+    sid = message["sid"]
+    response = message["response"]
+    emit(event="rp_response", args={
+        "response": response
+    }, to=sid)
+
+
+# ToDo Proper event code rather than these hardcoded yuckers
+# ToDo Proper typing rather than these bare jsons
 def validate_socket_message(session_str: str) -> Optional[User]:
     session = jwt.decode(session_str, public_key, algorithms=algo)
     session = Session.query(get_client()).get(session["session"])
