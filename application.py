@@ -1,7 +1,9 @@
 # DB
 from datetime import datetime, timedelta
+from typing import Optional
 from urllib import request
 
+import flask
 from elasticsearch import Elasticsearch
 from flask import Flask, redirect, url_for, make_response, jsonify
 from flask import request, g
@@ -23,7 +25,7 @@ from iam.user.model.user_role import UserRole
 from iam.user.repository.user_repository import UserRepository
 from location.location_query_service import LocationQueryService
 from location.location_repository import LocationRepository
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, disconnect
 
 application = Flask("application",
                     static_url_path='',
@@ -158,23 +160,40 @@ def hack():
     return (response, 200)
 
 
-@socketio.on("connect")
-#ToDo: proper IAM support, proper pydantic validation
-#ToDo: proper socket session management
+@socketio.on("connects")
+# ToDo: proper IAM support, proper pydantic validation
+# ToDo: proper socket session management
 def connect(message):
-    data = message['data']
-    session_str = data['session']
-    validate_socket_message(session_str)
+    if not message:
+        disconnect(request.sid)
+        return
+    # At least for now, session auth is managed through http login
+    # which i kinda like but i need to feel out if i should do socket auth sessions separatetly, probably not
+    session_str = message['session']
 
-def validate_socket_message(session_str: str) -> bool:
+    user = validate_socket_message(session_str)
+    if not user:
+        disconnect()
+        return
+    else:
+        # ToDo: test if flask-socketio forks sessions properly
+        flask.session['user'] = user
+
+@socketio.on("socketTest")
+# ToDo: proper IAM support, proper pydantic validation
+# ToDo: proper socket session management
+def connect(message):
+    user = flask.session['user']
+    return
+
+def validate_socket_message(session_str: str) -> Optional[User]:
     session = jwt.decode(session_str, public_key, algorithms=algo)
     session = Session.query(get_client()).get(session["session"])
 
     if (session):
-        g.user = user_repository.get(session.user_id)
-        return True
-    return False
+        return user_repository.get(session.user_id)
+    return None
 
 
 if __name__ == '__main__':
-    application.run(debug=True, port=8000)
+    socketio.run(application, allow_unsafe_werkzeug=True, debug=True, port=8000)
