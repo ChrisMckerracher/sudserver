@@ -23,14 +23,15 @@ from iam.user.model.user_role import UserRole
 from iam.user.repository.user_repository import UserRepository
 from location.location_query_service import LocationQueryService
 from location.location_repository import LocationRepository
+from flask_socketio import SocketIO, emit
 
 application = Flask("application",
                     static_url_path='',
                     static_folder='common/static',
                     template_folder='common/templates'
                     )
-
 CORS(application, supports_credentials=True)
+socketio = SocketIO(application)
 
 
 class SearchBody(BaseModel):
@@ -155,6 +156,24 @@ def hack():
     response.update(data)
 
     return (response, 200)
+
+
+@socketio.on("connect")
+#ToDo: proper IAM support, proper pydantic validation
+#ToDo: proper socket session management
+def connect(message):
+    data = message['data']
+    session_str = data['session']
+    validate_socket_message(session_str)
+
+def validate_socket_message(session_str: str) -> bool:
+    session = jwt.decode(session_str, public_key, algorithms=algo)
+    session = Session.query(get_client()).get(session["session"])
+
+    if (session):
+        g.user = user_repository.get(session.user_id)
+        return True
+    return False
 
 
 if __name__ == '__main__':
