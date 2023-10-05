@@ -18,7 +18,7 @@ from emails.email_query_service import EmailQueryService
 from emails.email_repository import EmailRepository
 from hackable.hackable_repository import HackableRepository
 from hackable.hacking_service import HackingService
-from iam.access.access_management import is_authorized
+from iam.access.access_management import is_authorized, is_socket_authorized
 from iam.session.model.session import Session
 from iam.user.model.user import User
 from iam.user.model.user_role import UserRole
@@ -160,10 +160,10 @@ def hack():
     return (response, 200)
 
 
-@socketio.on("connects")
+@socketio.on("authenticate")
 # ToDo: proper IAM support, proper pydantic validation
 # ToDo: proper socket session management
-def connect(message):
+def authenticate(message):
     if not message:
         disconnect(request.sid)
         return
@@ -173,7 +173,7 @@ def connect(message):
 
     user = validate_socket_message(session_str)
     if not user:
-        disconnect()
+        disconnect(request.sid, silent=True)
         return
     else:
         # ToDo: test if flask-socketio forks sessions properly
@@ -182,6 +182,7 @@ def connect(message):
 @socketio.on("socketTest")
 # ToDo: proper IAM support, proper pydantic validation
 # ToDo: proper socket session management
+@is_socket_authorized(UserRole.ADMIN)
 def connect(message):
     user = flask.session['user']
     return
