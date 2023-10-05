@@ -11,6 +11,7 @@ from flask_cors import CORS
 from flask_pydantic import validate
 from pydantic import BaseModel
 
+from chat.redis_ws_session import RedisAdminWSSession
 from creature.creature_query_service import CreatureQueryService
 from creature.creature_repository import CreatureRepository
 from db.redis.client_builder import get_client
@@ -176,6 +177,9 @@ def authenticate(message):
         disconnect(request.sid, silent=True)
         return
     else:
+        if user.role is UserRole.ADMIN:
+            redis_admin_session = RedisAdminWSSession(sid=request.sid)
+            RedisAdminWSSession.query(get_client()).save()
         # ToDo: test if flask-socketio forks sessions properly
         flask.session['user'] = user
 

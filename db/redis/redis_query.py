@@ -23,8 +23,8 @@ class RedisQuery(BaseModel):
             # ToDo: test case this on data string
             return self.type.model_validate_json(data)
 
-    def save(self, key: str, value: T):
-        self.client.set(key, value.json(), ex=persist_time)
+    def save(self, value: T):
+        self.client.set(value.id, value.json(), ex=persist_time)
 
     class Config:
         arbitrary_types_allowed = True
