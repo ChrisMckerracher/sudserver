@@ -38,7 +38,7 @@ class EsCacheRepository(EsRepository, Generic[T]):
             json_string = self.search(id)
             if (json_string):
                 val = cls.model_validate(json_string)
-                cls.query(self.redis).save(id, val)
+                cls.query(self.redis).save(val)
                 return val
             return None
         return val

@@ -11,7 +11,6 @@ from flask_cors import CORS
 from flask_pydantic import validate
 from pydantic import BaseModel
 
-from chat.redis_ws_session import RedisAdminWSSession
 from creature.creature_query_service import CreatureQueryService
 from creature.creature_repository import CreatureRepository
 from db.redis.client_builder import get_client
@@ -82,17 +81,19 @@ import jwt
 def login():
     data = request.json
     name = data['name']
+    role = data.get("role", UserRole.PLAYER)
+    role = UserRole(role)
 
     user = user_repository.get(name)
     if not user:
         # admin will be manually created so for now new users are auto-player
-        user = User(id=name, role=UserRole.PLAYER)
-        user_repository.save(name, user)
+        user = User(id=name, role=role)
+        user_repository.save(user)
 
     # we manually just overwrite existing sessions atm since this app isn't meant to scale
     secrets_string = gen_secret()
     session = Session(id=secrets_string, user_id=user.id)
-    Session.query(get_client()).save(secrets_string, session)
+    Session.query(get_client()).save(session)
     token = jwt.encode({
         "session": secrets_string
     }, public_key, algorithm=algo)
@@ -197,9 +198,13 @@ def connect(message):
 # ToDo: proper socket session management
 def rp_request(message):
     user = flask.session['user']
-    request = message["request"]
-    emit(event="rp_request", args = {
-        "request": request
+    rp_request_obj = message["request"]
+    emit("rp_request", {
+        "message": {
+            "test": "test"
+        },
+        "request": rp_request_obj,
+        "user": request.sid
     }, to="admin")
 
 
@@ -208,7 +213,7 @@ def rp_request(message):
 def rp_response(message):
     sid = message["sid"]
     response = message["response"]
-    emit(event="rp_response", args={
+    emit("rp_response", {
         "response": response
     }, to=sid)
 
