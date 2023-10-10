@@ -13,16 +13,16 @@ from pydantic import BaseModel
 
 from creature.creature_query_service import CreatureQueryService
 from creature.creature_repository import CreatureRepository
-from db.redis.client_builder import get_client
+from noauth.db.redis.client_builder import get_client
 from emails.email_query_service import EmailQueryService
 from emails.email_repository import EmailRepository
 from hackable.hackable_repository import HackableRepository
 from hackable.hacking_service import HackingService
-from iam.access.access_management import is_authorized, is_socket_authorized
-from iam.session.model.session import Session
-from iam.user.model.user import User
-from iam.user.model.user_role import UserRole
-from iam.user.repository.user_repository import UserRepository
+from noauth.iam.access.access_management import is_authorized, is_socket_authorized
+from noauth.iam.session.model.session import Session
+from noauth.iam.user.model.user import User
+from noauth.iam.user.model.user_role import UserRole
+from noauth.iam.user.repository.user_repository import UserRepository
 from location.location_query_service import LocationQueryService
 from location.location_repository import LocationRepository
 from flask_socketio import SocketIO, emit, join_room, disconnect, send
@@ -88,7 +88,7 @@ def login():
     if not user:
         # admin will be manually created so for now new users are auto-player
         user = User(id=name, role=role)
-        user_repository.save(user)
+        user_repository.save(id=name, document=user)
 
     # we manually just overwrite existing sessions atm since this app isn't meant to scale
     secrets_string = gen_secret()

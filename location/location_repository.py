@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-from db.es.es_repository import EsRepository
+from noauth.db.es.es_repository import EsRepository
 
 es = Elasticsearch(hosts="http://0.0.0.0:9200")
 
