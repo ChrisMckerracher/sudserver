@@ -1,6 +1,6 @@
 {
   "name": "payphone.723",
-  "type": "hackable",
   "enabled": true,
-  "controlling": false
+  "controlling": false,
+  "owning_organization": "local_gov"
 }

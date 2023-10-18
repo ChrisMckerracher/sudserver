@@ -1,6 +1,5 @@
 {
     "name": "edward.vonneuman",
-    "type": "creature",
     "species": "werewolf",
     "physicalTraits": "Strong, fur",
     "behavior": "Aggressive",

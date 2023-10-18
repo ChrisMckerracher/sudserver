@@ -1,0 +1,23 @@
+{  
+  "email": {
+    "mappings": {  
+      "properties": {
+        "name": {
+          "type": "keyword"
+        },
+        "subject": {
+          "type": "text"
+        },
+        "to": {
+          "type": "keyword"
+        },
+        "from": {
+          "type": "keyword"
+        },
+        "body": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}

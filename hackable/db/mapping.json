@@ -1,0 +1,20 @@
+{
+  "hackable": {
+    "mappings": {
+      "properties": {
+        "name": {
+          "type": "keyword"
+        },
+        "controlling": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "owning_organization": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

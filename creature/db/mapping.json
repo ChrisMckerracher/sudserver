@@ -1,0 +1,29 @@
+{  
+  "creature": {
+    "mappings": {  
+      "properties": {
+        "name": {
+          "type": "keyword"
+        },
+        "species": {
+          "type": "keyword"
+        },
+        "physicalTraits": {
+          "type": "text"
+        },
+        "behavior": {
+          "type": "text"
+        },
+        "intelligence": {
+          "type": "text"
+        },
+        "knownAbilities": {
+          "type": "text"
+        },
+        "history": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}

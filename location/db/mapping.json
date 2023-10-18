@@ -1,0 +1,23 @@
+{
+  "location": {
+    "mappings": {
+      "properties": {
+        "name": {
+          "type": "keyword"
+        },
+        "locationType": {
+          "type": "keyword"
+        },
+        "district": {
+          "type": "keyword"
+        },
+        "history": {
+          "type": "text"
+        },
+        "hackableItems": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
