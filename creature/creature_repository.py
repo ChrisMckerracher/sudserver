@@ -6,15 +6,9 @@ class CreatureRepository(EsRepository):
         super().__init__(es, "index")
 
     def search(self, species: str, name: str):
-        responses = self.es.search(index="entity", query={
+        responses = self.es.search(index="creature", query={
             "bool": {
                 "must": [
-                    {
-                        "query_string": {
-                            "fields": ["type"],
-                            "query": "creature"
-                        }
-                    },
                     {
                         "query_string": {
                             "fields": ["species"],

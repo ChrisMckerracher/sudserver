@@ -7,7 +7,7 @@ class HackableRepository(EsRepository):
         super().__init__(es, "index")
 
     def search(self, name: str):
-        responses = self.es.search(index="entity", query={
+        responses = self.es.search(index="hackable", query={
                 "bool": {
                     "must": [
                         {

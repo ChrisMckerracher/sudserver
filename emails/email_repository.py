@@ -10,7 +10,7 @@ class EmailRepository(EsRepository):
         super().__init__(es, "index")
 
     def search(self, email: str):
-        responses = self.es.search(index="entity", query={
+        responses = self.es.search(index="email", query={
                 "bool": {
                     "must": [
                         {

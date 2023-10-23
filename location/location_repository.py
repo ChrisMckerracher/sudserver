@@ -10,7 +10,7 @@ class LocationRepository(EsRepository):
         super().__init__(es, "index")
 
     def search(self, field: str, name: str):
-        responses = self.es.search(index="entity", query={
+        responses = self.es.search(index="location", query={
                 "bool": {
                     "must": [
                         {

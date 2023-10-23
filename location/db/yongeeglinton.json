@@ -1,7 +1,8 @@
 {
   "name": "yonge.eglinton",
   "locationType": "intersection",
-  "district": "midtown",
+  "district": 19,
   "history": "The midtown of Toronto",
-  "hackableItems": "[payphone.723, security_cam.789]"
+  "hackableItems": ["payphone.723", "security_cam.789"],
+  "subLocations": ["yonge.eglinton.mall"]
 }

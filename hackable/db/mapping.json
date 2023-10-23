@@ -8,8 +8,15 @@
         "controlling": {
           "type": "boolean"
         },
-        "enabled": {
-          "type": "boolean"
+        "toggleable": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          }
         },
         "owning_organization": {
           "type": "keyword"

@@ -146,12 +146,14 @@ hackingRepository = HackableRepository(es)
 hackingService = HackingService(hackingRepository)
 
 
-@application.route('/hack', methods=['POST'])
+# ToDo: refactor to use graphQL, as we need request body searching but also post body updates
+@application.route('/attemptHack', methods=['POST'])
 @validate()
 def hack():
     data = request.json
 
     response = hackingService.attemptHack(data["name"])
+    response.controlled = True
 
     response = {
         "values": response
@@ -160,6 +162,24 @@ def hack():
     response.update(data)
 
     return (response, 200)
+
+#I hate this but i need to get this done
+@application.route('/hack', methods=['POST'])
+@validate()
+def hack_write():
+    data = request.json
+
+    response = hackingService.hack(data['name'], data)
+    response.controlled = True
+
+    response = {
+        "values": response
+    }
+
+    response.update(data)
+
+    return (response, 200)
+
 
 
 @socketio.on("authenticate")
@@ -197,7 +217,6 @@ def connect(message):
 # ToDo: proper IAM support, proper pydantic validation
 # ToDo: proper socket session management
 def rp_request(message):
-    user = flask.session['user']
     rp_request_obj = message["request"]
     emit("rp_request", {
         "message": {
@@ -216,6 +235,7 @@ def rp_response(message):
     emit("rp_response", {
         "response": response
     }, to=sid)
+    #disconnect(sid=sid)
 
 
 # ToDo Proper event code rather than these hardcoded yuckers

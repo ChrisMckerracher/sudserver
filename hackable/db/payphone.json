@@ -1,6 +1,9 @@
 {
   "name": "payphone.723",
-  "enabled": true,
   "controlling": false,
-  "owning_organization": "local_gov"
+  "owning_organization": "local_gov",
+  "toggleable": [{
+    "name": "enabled",
+    "value": true
+  }]
 }

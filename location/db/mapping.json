@@ -9,13 +9,16 @@
           "type": "keyword"
         },
         "district": {
-          "type": "keyword"
+          "type": "integer"
         },
         "history": {
           "type": "text"
         },
         "hackableItems": {
           "type": "text"
+        },
+        "subLocations": {
+          "type": "keyword"
         }
       }
     }
